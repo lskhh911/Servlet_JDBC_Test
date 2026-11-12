@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生信息管理 | Servlet + JDBC</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <div>
+        <span class="badge">Servlet + JDBC · JavaWeb</span>
+        <h1>学生信息管理</h1>
+        <p class="subtitle">数据通过 Servlet + JDBC 保存到 MySQL，刷新页面不会丢失。<br>支持按姓名或年级搜索，新增、编辑、删除会同步修改数据库。</p>
+      </div>
+      <button class="btn btn-primary" id="openAddBtn" type="button">
+        <span class="plus">+</span> 新增学生
+      </button>
+    </header>
+
+    <main class="card">
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input id="searchInput" type="search" placeholder="搜索姓名或年级..." autocomplete="off" aria-label="搜索学生">
+        </div>
+        <span class="record-count" id="recordCount">正在加载...</span>
+      </div>
+
+      <div class="table-wrap" id="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">学生</th>
+              <th scope="col">年级</th>
+              <th scope="col">性别</th>
+              <th scope="col">成绩</th>
+              <th scope="col" style="text-align: right;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="studentTbody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty" id="emptyState" hidden>
+        <span class="empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 7.5 12 4l8 3.5-8 3.5-8-3.5Z"></path>
+            <path d="M4 7.5V16l8 4 8-4V7.5"></path>
+            <path d="M12 11v9"></path>
+          </svg>
+        </span>
+        <h2 id="emptyTitle">暂无学生数据</h2>
+        <p id="emptyText">还没有学生记录，点击右上角新增一位。</p>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <span>接口：<code>GET / POST / PUT / DELETE /api/students</code></span>
+      <span>数据源：MySQL · <code>learnjdbc.students</code></span>
+    </footer>
+  </div>
+
+  <!-- 新增 / 编辑弹窗 -->
+  <div class="modal" id="studentModal" aria-hidden="true">
+    <div class="modal-mask" data-close="true"></div>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="modalTitle">新增学生</h2>
+          <p>提交后会通过 Servlet 写入数据库，带 * 的为必填项。</p>
+        </div>
+        <button class="icon-btn" id="closeModalBtn" type="button" aria-label="关闭弹窗">&times;</button>
+      </div>
+
+      <form id="studentForm" novalidate>
+        <input id="studentId" type="hidden">
+        <div class="form-grid">
+          <label class="field full">
+            <span>姓名 <em>*</em></span>
+            <input id="nameInput" type="text" maxlength="50" placeholder="例如：张三" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>年级 <em>*</em></span>
+            <select id="gradeInput">
+              <option value="1">一年级</option>
+              <option value="2">二年级</option>
+              <option value="3">三年级</option>
+              <option value="4">四年级</option>
+              <option value="5">五年级</option>
+              <option value="6">六年级</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>性别 <em>*</em></span>
+            <select id="genderInput">
+              <option value="1">男</option>
+              <option value="0">女</option>
+            </select>
+          </label>
+          <label class="field full">
+            <span>成绩 <em>*</em></span>
+            <input id="scoreInput" type="number" min="0" max="100" step="1" placeholder="0 到 100 分">
+          </label>
+        </div>
+        <p class="form-error" id="formError" role="alert"></p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="cancelBtn" type="button">取消</button>
+          <button class="btn btn-primary" id="saveBtn" type="submit">保存</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
